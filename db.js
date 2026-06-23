@@ -25,13 +25,14 @@ function getDbConfig() {
 
 const dbConfig = getDbConfig();
 const isProduction = process.env.NODE_ENV === 'production';
+const useMysqlSsl = isProduction || !['localhost', '127.0.0.1', 'mysql'].includes(dbConfig.host);
 
 const pool = mysql.createPool({
   ...dbConfig,
   waitForConnections: true,
   connectionLimit: 10,
   charset: 'utf8mb4',
-  ssl: isProduction ? { rejectUnauthorized: false } : undefined,
+  ssl: useMysqlSsl ? { rejectUnauthorized: false } : undefined,
 });
 
 async function run(sql, params = []) {

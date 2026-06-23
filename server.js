@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 3000;
 const clientDist = path.join(__dirname, 'client', 'dist');
 
 app.set('trust proxy', 1);
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
