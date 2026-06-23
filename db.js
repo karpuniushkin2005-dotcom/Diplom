@@ -23,15 +23,24 @@ function getDbConfig() {
   };
 }
 
+function shouldUseMysqlSsl(host) {
+  if (!host) return false;
+  if (['localhost', '127.0.0.1', 'mysql'].includes(host)) return false;
+  if (host.endsWith('.railway.internal')) return false;
+  return true;
+}
+
 const dbConfig = getDbConfig();
-const isProduction = process.env.NODE_ENV === 'production';
-const useMysqlSsl = isProduction || !['localhost', '127.0.0.1', 'mysql'].includes(dbConfig.host);
+const useMysqlSsl = shouldUseMysqlSsl(dbConfig.host);
+
+console.log(`MySQL: ${dbConfig.host}:${dbConfig.port}/${dbConfig.database} (ssl: ${useMysqlSsl})`);
 
 const pool = mysql.createPool({
   ...dbConfig,
   waitForConnections: true,
   connectionLimit: 10,
   charset: 'utf8mb4',
+  connectTimeout: 15000,
   ssl: useMysqlSsl ? { rejectUnauthorized: false } : undefined,
 });
 

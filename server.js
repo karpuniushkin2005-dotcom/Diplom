@@ -11,9 +11,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const clientDist = path.join(__dirname, 'client', 'dist');
 
+let dbReady = false;
+
 app.set('trust proxy', 1);
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, db: dbReady });
 });
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
@@ -35,26 +37,22 @@ app.get('*', (req, res, next) => {
   });
 });
 
-async function startServer() {
+async function connectDatabase() {
   for (let attempt = 1; attempt <= 30; attempt += 1) {
     try {
       await initDatabase();
-      app.listen(PORT, () => {
-        console.log(`Сервер запущен: http://localhost:${PORT}`);
-        console.log('Фронтенд: React (client/dist)');
-        console.log('База данных: MySQL');
-        console.log('Админ: admin@fitness.local / admin123');
-      });
+      dbReady = true;
+      console.log('База данных готова');
       return;
     } catch (error) {
-      if (attempt === 30) {
-        console.error('Ошибка инициализации базы данных:', error.message);
-        process.exit(1);
-      }
-      console.log(`Ожидание MySQL... попытка ${attempt}/30`);
+      console.log(`Ожидание MySQL... ${attempt}/30: ${error.message}`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
+  console.error('MySQL недоступен. Проверьте MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE в Railway Variables.');
 }
 
-startServer();
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
+  connectDatabase();
+});
