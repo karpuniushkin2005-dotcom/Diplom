@@ -17,6 +17,17 @@ app.set('trust proxy', 1);
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, db: dbReady });
 });
+
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health') return next();
+  if (!dbReady) {
+    return res.status(503).json({
+      message: 'База данных подключается. Подождите 10–30 секунд и обновите страницу.',
+    });
+  }
+  next();
+});
+
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

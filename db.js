@@ -19,7 +19,7 @@ function getDbConfig() {
     port: Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306),
     user: process.env.MYSQLUSER || process.env.DB_USER || 'impulse',
     password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || 'impulse123',
-    database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'impulse_fitness',
+    database: process.env.MYSQLDATABASE || process.env.DB_NAME || (process.env.MYSQLHOST ? 'railway' : 'impulse_fitness'),
   };
 }
 
@@ -160,4 +160,4 @@ async function initDatabase() {
   }
 }
 
-module.exports = { pool, run, all, get, initDatabase };
+module.exports = { pool, run, all, get, initDatabase, getDbConfig };

@@ -65,23 +65,28 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await get('SELECT * FROM users WHERE email = ?', [email]);
-  if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-    return res.status(401).json({ message: 'Неверный email или пароль' });
-  }
+  try {
+    const { email, password } = req.body;
+    const user = await get('SELECT * FROM users WHERE email = ?', [email]);
+    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+      return res.status(401).json({ message: 'Неверный email или пароль' });
+    }
 
-  sendAuthSuccess(
-    res,
-    {
-      id: user.id,
-      fullname: user.fullname,
-      phone: user.phone,
-      email: user.email,
-      role: user.role
-    },
-    'Вход выполнен'
-  );
+    sendAuthSuccess(
+      res,
+      {
+        id: user.id,
+        fullname: user.fullname,
+        phone: user.phone,
+        email: user.email,
+        role: user.role
+      },
+      'Вход выполнен'
+    );
+  } catch (error) {
+    console.error('login:', error.message);
+    res.status(503).json({ message: 'База данных недоступна. Подождите и попробуйте снова.' });
+  }
 });
 
 router.post('/logout', (req, res) => {

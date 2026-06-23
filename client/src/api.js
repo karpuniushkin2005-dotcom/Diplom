@@ -18,11 +18,16 @@ export async function apiRequest(url, options = {}) {
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-    credentials: 'include'
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+      credentials: 'include'
+    });
+  } catch {
+    throw new Error('Сервер недоступен. Сайт ещё загружается — подождите и обновите страницу.');
+  }
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
