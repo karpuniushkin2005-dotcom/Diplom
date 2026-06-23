@@ -20,12 +20,6 @@ COPY database ./database
 COPY --from=client-build /app/client/dist ./client/dist
 
 ENV NODE_ENV=production
-ENV PORT=3000
-ENV DB_HOST=mysql
-ENV DB_PORT=3306
-ENV DB_USER=impulse
-ENV DB_PASSWORD=impulse123
-ENV DB_NAME=impulse_fitness
 
 EXPOSE 3000
 

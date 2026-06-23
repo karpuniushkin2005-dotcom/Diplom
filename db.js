@@ -1,15 +1,37 @@
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 
+function getDbConfig() {
+  const url = process.env.MYSQL_URL || process.env.DATABASE_URL;
+  if (url) {
+    const parsed = new URL(url);
+    return {
+      host: parsed.hostname,
+      port: Number(parsed.port || 3306),
+      user: decodeURIComponent(parsed.username),
+      password: decodeURIComponent(parsed.password),
+      database: parsed.pathname.replace(/^\//, ''),
+    };
+  }
+
+  return {
+    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+    port: Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306),
+    user: process.env.MYSQLUSER || process.env.DB_USER || 'impulse',
+    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || 'impulse123',
+    database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'impulse_fitness',
+  };
+}
+
+const dbConfig = getDbConfig();
+const isProduction = process.env.NODE_ENV === 'production';
+
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'impulse',
-  password: process.env.DB_PASSWORD || 'impulse123',
-  database: process.env.DB_NAME || 'impulse_fitness',
+  ...dbConfig,
   waitForConnections: true,
   connectionLimit: 10,
-  charset: 'utf8mb4'
+  charset: 'utf8mb4',
+  ssl: isProduction ? { rejectUnauthorized: false } : undefined,
 });
 
 async function run(sql, params = []) {

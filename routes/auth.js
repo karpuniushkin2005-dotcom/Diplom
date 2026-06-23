@@ -15,7 +15,11 @@ function isPhone(value) {
 
 function sendAuthSuccess(res, user, message) {
   const token = signToken(user);
-  res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
+  res.cookie('token', token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
   res.json({
     message,
     token,
@@ -81,7 +85,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', { secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
   res.clearCookie('userId');
   res.json({ message: 'Вы вышли из аккаунта' });
 });

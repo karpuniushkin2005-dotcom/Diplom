@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getToken } from '../api.js';
 
 export default function Header() {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
-  const loggedIn = !!getToken();
+  const [loggedIn, setLoggedIn] = useState(() => !!getToken());
 
   const close = () => setOpen(false);
+
+  useEffect(() => {
+    setLoggedIn(!!getToken());
+  }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';

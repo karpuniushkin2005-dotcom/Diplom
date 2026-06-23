@@ -55,7 +55,7 @@ export default function Register() {
             <input name="password" type="password" placeholder="Пароль" minLength={6} value={form.password} onChange={onChange} required />
             <button className="btn btn--primary" type="submit">Зарегистрироваться</button>
             <Link className="auth-link" to="/login">Уже есть аккаунт? Войти</Link>
-            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#8fbf22' }}>{message}</p>}
+            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#ff6b6b' }}>{message}</p>}
           </form>
         </div>
       </main>

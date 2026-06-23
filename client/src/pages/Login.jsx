@@ -53,7 +53,7 @@ export default function Login() {
             <input name="password" type="password" placeholder="Пароль" value={form.password} onChange={onChange} required />
             <button className="btn btn--primary" type="submit">Войти</button>
             <Link className="auth-link" to="/register">Нет аккаунта? Зарегистрироваться</Link>
-            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#8fbf22' }}>{message}</p>}
+            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#ff6b6b' }}>{message}</p>}
           </form>
         </div>
       </main>

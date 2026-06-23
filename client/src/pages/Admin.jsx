@@ -33,7 +33,9 @@ export default function Admin() {
         setOk(true);
         await loadLeads();
       }
-    } catch {}
+    } catch {
+      setLoggedIn(false);
+    }
   };
 
   useEffect(() => {
@@ -72,16 +74,29 @@ export default function Admin() {
   };
 
   const changeStatus = async (id, status) => {
-    await apiRequest(`/api/admin/applications/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status })
-    });
-    await loadLeads();
+    try {
+      await apiRequest(`/api/admin/applications/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      await loadLeads();
+    } catch (error) {
+      setMessage(error.message);
+      setOk(false);
+    }
   };
 
   const deleteLead = async (id) => {
-    await apiRequest(`/api/admin/applications/${id}`, { method: 'DELETE' });
-    await loadLeads();
+    if (!window.confirm('Удалить заявку?')) return;
+    try {
+      await apiRequest(`/api/admin/applications/${id}`, { method: 'DELETE' });
+      await loadLeads();
+      setMessage('Заявка удалена');
+      setOk(true);
+    } catch (error) {
+      setMessage(error.message);
+      setOk(false);
+    }
   };
 
   return (
@@ -105,7 +120,7 @@ export default function Admin() {
               <input name="password" type="password" placeholder="Пароль" value={loginForm.password}
                 onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} required />
               <button className="btn btn--primary" type="submit">Войти</button>
-              {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#8fbf22' }}>{message}</p>}
+              {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#ff6b6b' }}>{message}</p>}
             </form>
           )}
 
@@ -115,6 +130,7 @@ export default function Admin() {
                 <button className="btn btn--ghost" type="button" onClick={loadLeads}>Обновить заявки</button>
                 <button className="btn btn--ghost" type="button" onClick={logout}>Выйти</button>
               </div>
+              {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#ff6b6b' }}>{message}</p>}
               <div className="table-wrap">
                 <table>
                   <thead>

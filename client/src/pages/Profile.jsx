@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AuthHeader from '../components/AuthHeader.jsx';
 import { apiRequest, setToken } from '../api.js';
 import { IMAGES } from '../images.js';
@@ -14,7 +14,6 @@ const STATUS_LABELS = {
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [leads, setLeads] = useState([]);
   const [form, setForm] = useState({ fullname: '', phone: '' });
   const [info, setInfo] = useState('Загружаем данные профиля...');
@@ -28,7 +27,6 @@ export default function Profile() {
         navigate('/login');
         return;
       }
-      setUser(me);
       setForm({ fullname: me.fullname, phone: me.phone });
       setInfo(`${me.fullname} | ${me.email} | ${me.phone}`);
       const apps = await apiRequest('/api/my-applications');
@@ -85,7 +83,7 @@ export default function Profile() {
             <input name="fullname" placeholder="ФИО" value={form.fullname} onChange={(e) => setForm({ ...form, fullname: e.target.value })} required />
             <input name="phone" placeholder="+7 (___) ___-__-__" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
             <button className="btn btn--primary" type="submit">Сохранить профиль</button>
-            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#8fbf22' }}>{message}</p>}
+            {message && <p className="form-message" style={{ color: ok ? '#118a32' : '#ff6b6b' }}>{message}</p>}
           </form>
           <div className="admin-toolbar">
             <a className="btn btn--primary" href="/#lead">Записаться на программу</a>

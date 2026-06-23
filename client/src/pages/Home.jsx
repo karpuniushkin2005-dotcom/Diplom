@@ -327,7 +327,7 @@ export default function Home() {
                 <textarea placeholder="Комментарий" value={lead.comment} onChange={(e) => setLead({ ...lead, comment: e.target.value })} />
                 <label className="checkbox"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required /> Согласен на обработку персональных данных</label>
                 <button className="btn btn--primary" type="submit">Отправить заявку</button>
-                {leadMsg && <p className="form-message" style={{ color: leadOk ? '#118a32' : '#8fbf22' }}>{leadMsg}</p>}
+                {leadMsg && <p className="form-message" style={{ color: leadOk ? '#118a32' : '#ff6b6b' }}>{leadMsg}</p>}
               </form>
             </div>
           </div>

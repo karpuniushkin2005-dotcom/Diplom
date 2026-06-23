@@ -11,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const clientDist = path.join(__dirname, 'client', 'dist');
 
+app.set('trust proxy', 1);
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,7 +33,7 @@ app.get('*', (req, res, next) => {
 });
 
 async function startServer() {
-  for (let attempt = 1; attempt <= 15; attempt += 1) {
+  for (let attempt = 1; attempt <= 30; attempt += 1) {
     try {
       await initDatabase();
       app.listen(PORT, () => {
@@ -43,11 +44,11 @@ async function startServer() {
       });
       return;
     } catch (error) {
-      if (attempt === 15) {
+      if (attempt === 30) {
         console.error('Ошибка инициализации базы данных:', error.message);
         process.exit(1);
       }
-      console.log(`Ожидание MySQL... попытка ${attempt}/15`);
+      console.log(`Ожидание MySQL... попытка ${attempt}/30`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
